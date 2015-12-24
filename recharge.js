@@ -16,6 +16,8 @@ var RechargeDialog = JoyE.BaseDialog.extend({
 
     },
 
+
+
     initPageView:function() {
 
         var self = this;

@@ -10,8 +10,9 @@ var MainCityMap = cc.Layer.extend({
 		var nodeBuildings = new cc.Node();
 		JoyE.uiloader.load(nodeBuildings, res.BuildingLayer_json);
 		this.sentryNode = new cc.Node();
-		this.sentryNode.setPosition(1700, 1570);
+		this.sentryNode.setPosition(1070, 1930);
 		this.addChild(this.sentryNode,10000);
+
 		JoyE.uiloader.load(this.sentryNode, res.Soldier_json);
 		this.m_mapSize = this.rootNode.getContentSize();
 		// MainCityMapLayer 的坐标原点就是地图的中心点，所以以后对MainCityMapLayer调用setPosition就是把地图中心移动到某个位置
@@ -375,31 +376,45 @@ var MainCityMap = cc.Layer.extend({
 		}
 	},
 
-	playSentryAnimation:function() {
-		var moveBy = cc.moveBy(2,cc.p(1700, 1570));
-		this.sentryNode.rootNode.stopAllActions();
-		//JoyE.playAnimation(this.sentryNode.rootNode, "animation0", true);
-		//JoyE.playAnimation(this.sentryNode.rootNode, "animation1", true);
-	},
-	animationEvent:function(armature, movementType, movementID) {
-		if(movementType == ccs.MovementEventType.loopComplete){
-			if(movementID == "animation0") {
-				var moveBy = cc.moveBy(2, cc.p(1700, 1570));
-				this.sentryNode.rootNode.stopAllActions();
-				this.sentryNode.rootNode.runAction(cc.sequence(moveBy, cc.callFunc(this.callback, this)));
-				JoyE.playAnimation(this.sentryNode.rootNode, "animation0", true);
-			}
-		}
+	playSentryAnimation:function(count) {
+
+		var animList = [];
+		var actionTo = cc.moveTo(5, cc.p(980,1975));
+		var actionByBack = cc.moveTo(5, cc.p(1070, 1930));
+
+		//for(var i = 0; i < count; i++){
+		//	this.sentryNode = new cc.Node();
+		//	var posNew = JoyE.soldier["pathpoint" + i];
+		//	var posRec = JoyE.soldier["pathpoint" + (i+1)];
+		//	this.sentryNode.setPosition(posNew);
+		//	this.addChild(this.sentryNode,10000);
+		//	var rootNodeInner = this.sentryNode.rootNode;
+        //
+		//	var actionTo = cc.moveTo(5, posRec);
+		//	var actionByBack = cc.moveTo(5, posNew);
+		//	animList.push(new cc.CallFunc(function() {JoyE.playAnimation(rootNodeInner, "animation0", true)}));
+		//	animList.push(actionTo);
+		//	animList.push(new cc.CallFunc(function() {JoyE.playAnimation(rootNodeInner, "animation1", true)}));
+		//	animList.push(actionByBack);
+		//	this.sentryNode.runAction(cc.sequence(animList).repeatForever());
+		//}
+
+		var rootNodeInner = this.sentryNode.rootNode;
+		animList.push(new cc.CallFunc(function() {JoyE.playAnimation(rootNodeInner, "animation0", true)}));
+		animList.push(actionTo);
+		animList.push(new cc.CallFunc(function() {JoyE.playAnimation(rootNodeInner, "animation1", true)}));
+		animList.push(actionByBack);
+		this.sentryNode.runAction(cc.sequence(animList).repeatForever());
 	},
 	onEnter:function(){
 		this._super();
-		this.sentryNode.rootNode.getAnimation().setMovementEventCallFunc(function(armature, movementType, movementID){
-			this.animationEvent(armature, movementType, movementID);
-		});
+		this.playSentryAnimation();
 	},
 	onExit:function() {
 		this._super();
 	}
 
 });
+
+
 
